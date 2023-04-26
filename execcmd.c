@@ -1,5 +1,9 @@
 #include "main.h"
-
+/**
+ * execcmd - main function
+ * @argv: is argument vector
+ * Return: Nothing
+ */
 void execcmd(char **argv)
 {
 	char *cmd = NULL, *real_cmd = NULL;

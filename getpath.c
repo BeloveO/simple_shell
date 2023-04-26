@@ -1,5 +1,9 @@
 #include "main.h"
-
+/**
+ * getpath - fucntion def
+ * @cmd: is a variable
+ * Return: character
+ */
 char *getpath(char *cmd)
 {
 	char *path, *path_cpy, *path_token, *file_path;
@@ -7,14 +11,14 @@ char *getpath(char *cmd)
 	struct stat buffer;
 
 	path = getenv("PATH");
-	
+
 	if (path != NULL)
 	{
 		path_cpy = strdup(path);
 		cmd_len = strlen(cmd);
 		path_token = strtok(path_cpy, ":");
 
-		while(path_token != NULL)
+		while (path_token != NULL)
 		{
 			dir_len = strlen(path_token);
 			file_path = malloc(cmd_len + dir_len + 2);
@@ -27,7 +31,6 @@ char *getpath(char *cmd)
 			if (stat(file_path, &buffer) == 0)
 			{
 				free(path_cpy);
-				
 				return (file_path);
 			}
 			else
@@ -35,18 +38,12 @@ char *getpath(char *cmd)
 				free(file_path);
 				path_token = strtok(NULL, ":");
 			}
-
 		}
 		free(path_cpy);
-
-		if(stat(cmd, &buffer) == 0)
-		{
+		if (stat(cmd, &buffer) == 0)
 			return (cmd);
-		}
-
 		return (NULL);
 	}
-
 	return (NULL);
-	
 }
+
