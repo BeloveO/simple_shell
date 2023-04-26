@@ -1,49 +1,60 @@
 #include "main.h"
 /**
+ * free_data - free data structure
+ * @datash: data structure
+*/
+void free_data(data_shell *datash)
+{
+	unsigned int i;
+
+	for (i = 0; datash->_env1[i]; i++)
+		free(datash->_env1);
+	free(datash->_env1);
+	free(datash->pid);
+}
+
+/**
+ * set_data - init data structure
+ * @datash: data structure
+ * @argv: argument vector
+*/
+void set_data(data_shell *datash, char **argv)
+{
+	unsigned int i;
+
+	datash->argv = argv;
+	datash->input = NULL;
+	datash->args = NULL;
+	datash->status = 0;
+	datash->counter = 1;
+
+	for (i = 0; env[i]; i++)
+		;
+	datash->_env1 = malloc(sizeof(char *) * (i + 1));
+
+	for (i = 0; env[i]; i++)
+		datash->_env1[i] = _strdup(env[i]);
+
+	datash->_env1[i] = NULL;
+	datash->pid = _itoa(getpid());
+}
+
+/**
  * main - main fun def
  * @argc: is arg count
  * @argv: is arg vector
- * Return: int
+ * Return: success(0)
  */
 int main(int argc, char **argv)
-{ char *prompt = "simple_shell$ ", *linep = NULL, *linep_cpy = NULL, *token;
-	const char *delim = " \n";
-	size_t n = 0;
-	ssize_t nchar;
-	int ntoken = 0, i;
+{
+	data_shell datash;
+	(void) argc;
 
-	(void)argc;
-	while (1)
-	{ printf("%s", prompt);
-		nchar = getline(&linep, &n, stdin);
-		if (nchar == -1)
-		{ printf("Exiting shell.....\n");
-			return (-1);
-		}
-		linep_cpy = malloc(sizeof(char) * nchar);
-		if (linep_cpy == NULL)
-		{ perror("tsh: Memory allocation error");
-			return (-1);
-		}
-		strcpy(linep_cpy, linep);
-		token = strtok(linep, delim);
-		while (token != NULL)
-		{ ntoken++;
-			token = strtok(NULL, delim);
-		}
-		ntoken++;
-		argv = malloc(sizeof(char *) * ntoken);
-		token = strtok(linep_cpy, delim);
-		for (i = 0; token != NULL; i++)
-		{ argv[i] = malloc(sizeof(char) * strlen(token));
-			strcpy(argv[i], token);
-			token = strtok(NULL, delim);
-		}
-		argv[i] = NULL;
-		execcmd(argv);
-	}
-	free(argv);
-	free(linep);
-	free(linep_cpy);
-	return (0);
+	signal(SIGINT, sigint);
+	set_data(&datash, argv);
+	shell_loop(&datash);
+	free_data(&datash);
+	if (datash.status < 0)
+		return (255);
+	return (datash.status);
 }
