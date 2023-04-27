@@ -4,35 +4,20 @@
  * @argv: is argument vector
  * Return: Nothing
  */
-void execcmd(char **argv)
-{
-	char *cmd = NULL, *real_cmd = NULL;
-	int status;
-	pid_t pid;
+void execcmd(char **argv){
+    char *cmd = NULL;
 
-	if (argv != NULL)
-	{
-		cmd = argv[0];
+    if (argv){
+        /* get the cmd */
+        cmd = argv[0];
 
-		real_cmd = getpath(cmd);
-	}
+        /* generate the path to this cmd before passing it to execve */
+        /* real_cmd = getpath(cmd); */
 
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		exit(1);
-	}
-	else if (pid == 0)
-	{
-		/*Child process: execute the command */
-		execvp(argv[0], argv);
-		perror("execvp");
-		exit(1);
-	}
-	else
-	{
-		/*Parent process: wait for the child to finish */
-		waitpid(pid, &status, 0);
-	}
+        /* execute the real cmd with execve */
+        if (execve(cmd, argv, NULL) == -1){
+            perror("./shell");
+        }
+    }
+
 }
