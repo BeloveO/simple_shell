@@ -72,3 +72,4 @@ char *startwith(const char *varOne, const char *varTwo)
 			return (NULL);
 	return ((char *)varOne);
 }
+
